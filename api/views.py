@@ -39,12 +39,6 @@ class CreateTeacherView(CreateAPIView):
     serializer_class = TeacherSerializer
     model = Teacher
 
-    def get_object(self):
-        queryset = self.get_queryset()
-        user = User.objects.get(email=self.request.data.get('email'))
-        obj = get_object_or_404(queryset, user=user)
-        return obj
-
 class RetrieveStudentView(RetrieveAPIView):
     queryset = Student.objects.all()
     permission_classes = [IsAuthenticated, ProfilePermission]
@@ -62,6 +56,12 @@ class RetrieveTeacherView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, ProfilePermission]
     serializer_class = TeacherSerializer
     model = Teacher
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        user = User.objects.get(email=self.request.data.get('email'))
+        obj = get_object_or_404(queryset, user=user)
+        return obj
 
 class StudentView(APIView):
     permission_classes = [IsAuthenticated, StudentPermission]
