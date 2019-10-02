@@ -20,6 +20,9 @@ class Subject(models.Model):
     code = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=50, null=False)
 
+    def __str__(self):
+        return (self.name+"-"+self.code)
+
 
 class Section(models.Model):
     #will include slot like CO402-P
@@ -28,7 +31,8 @@ class Section(models.Model):
     students = models.ManyToManyField(Student,blank=False)
     teacher = models.ForeignKey(Teacher,on_delete=models.CASCADE)
 
-
+    def __str__(self):
+        return self.slot
 
 
 class Timetable(models.Model):
@@ -50,9 +54,15 @@ class Timetable(models.Model):
     endTime = models.TimeField()
     location = models.CharField(max_length = 50)
 
+    def __str__(self):
+        return str(self.section)+"-"+self.day
+
 class Attendance(models.Model):
     timetable = models.ForeignKey(Timetable,on_delete=models.CASCADE)
     date = models.DateField()
     #students contain only present students. Total no. of class will be calculated using current date and timetable.
     #total % will be calculated accordingly
     students = models.ManyToManyField(Student)
+
+    def __str__(self):
+        return str(self.timetable.section)+"-"+str(self.date)

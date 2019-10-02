@@ -7,21 +7,28 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from .permissions import AttendancePermission, StudentPermission, TeacherPermission, ProfilePermission
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 
 class AttendanceView(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
     def post(self, request):
         try:
-            timetableid = request.data.get('timetableid')[0]
+            timetableid = request.data.get('timetableid')
             timetable = Timetable.objects.get(id=timetableid)
             date = request.data.get('date')
             rollnos = request.data.get('rollnos')
-            self.check_object_permissions(request,timetable)
+            print (self.check_object_permissions(request, timetable))
             print(rollnos)
-            attendance = Attendance.objects.create(timetable = timetable, date = date)
+            students = []
             for r in rollnos:
-                attendance.students.add(Student.objects.get(rollno = r))
+                students.append(Student.objects.get(rollno=r))
+            attendance = Attendance.objects.create(timetable=timetable, date=date)
+            for s in students:
+                attendance.students.add(s)
             attendance.save()
+
+        except PermissionDenied as e:
+            return Response({"detail": str(e)})
 
         except Exception as e:
             print ("error while saving atendance",e)
@@ -69,7 +76,7 @@ class StudentView(APIView):
         # print("roll no is -------------> ",request.data.get('rollno'))
         # rollno = request.data.get('rollno')
         try:
-            email = request.GET["email"]
+            email = request.data.get('email')
             student = Student.objects.get(user__email=email)
             # print("studet is ------------------------>",student.name)
             sections = student.section_set.all()
@@ -90,7 +97,7 @@ class TimetableView(APIView):
     permission_classes = [IsAuthenticated, StudentPermission]
     def get(self, request):
         try:
-            email = request.GET['email']
+            email = request.data.get('email')
             student = Student.objects.get(user__email=email)
             sections = student.section_set.all()
             response = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": []}
@@ -115,9 +122,9 @@ class SectionStudentView(APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
     def get(self, request):
         try:
-            email = request.GET['email']
-            teacher = Teacher.objects.get(email=email)
-            section = teacher.section_set.all().filter(slot=request.GET['slot'])[0]
+            email = request.data.get('email')
+            teacher = Teacher.objects.get(user__email=email)
+            section = teacher.section_set.all().filter(slot=request.data.get('slot'))[0]
             sectionserializer = SectionSerializer(section)
             students = section.students.all()
             studentsserializer = StudentSerializer(students, many=True)
@@ -132,8 +139,8 @@ class TeacherTimetableView(APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
     def get(self, request):
         try:
-            email = request.GET['email']
-            teacher = Teacher.objects.get(email=email)
+            email = request.data.get('email')
+            teacher = Teacher.objects.get(user__email=email)
             sections = teacher.section_set.all()
             response = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": []}
             for i in sections:

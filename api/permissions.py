@@ -20,7 +20,8 @@ class StudentPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         token = request.auth
         user_request = User.objects.get(auth_token=token)
-        email = request.GET['email']
+        email = request.data.get('email')
+        print (email)
         user_authorized = User.objects.get(email=email)
 
         return user_authorized == user_request
@@ -32,7 +33,7 @@ class TeacherPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         token = request.auth
         user_request = User.objects.get(auth_token=token)
-        email = request.GET['email']
+        email = request.data.get('email')
         user_authorized = User.objects.get(email=email)
 
         return user_authorized == user_request

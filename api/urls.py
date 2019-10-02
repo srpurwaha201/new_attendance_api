@@ -4,13 +4,13 @@ from .views import AttendanceView, StudentView, TimetableView, SectionStudentVie
 app_name = "attendances"
 
 urlpatterns = [
-    url('attendances/', AttendanceView.as_view()),
+    url('attendances/$', AttendanceView.as_view()),
     url('student/$', StudentView.as_view()),
-    url('student/profile/create', CreateStudentView.as_view()),
-    url('teacher/profile/create', CreateTeacherView.as_view()),
-    url('student/profile/view', RetrieveStudentView.as_view()),
-    url('teacher/profile/view', RetrieveTeacherView.as_view()),
-    url('timetable/', TimetableView.as_view()),
-    url('section_students/', SectionStudentView.as_view()),
-    url('teacher/timetable/', TeacherTimetableView.as_view())
+    url('student/profile/create/$', CreateStudentView.as_view()),
+    url('teacher/profile/create/$', CreateTeacherView.as_view()),
+    url('student/profile/view/$', RetrieveStudentView.as_view()),
+    url('teacher/profile/view/$', RetrieveTeacherView.as_view()),
+    url('student/timetable/', TimetableView.as_view()),
+    url('section_students/$', SectionStudentView.as_view()),
+    url('teacher/timetable/$', TeacherTimetableView.as_view())
 ]

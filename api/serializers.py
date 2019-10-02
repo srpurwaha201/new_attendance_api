@@ -77,12 +77,12 @@ class SubejctSerializer(serializers.Serializer):
 
 
 class SectionSerializer(serializers.Serializer):
-    subject = SubejctSerializer( read_only=True)
+    subject = SubejctSerializer(read_only=True)
     teacher = TeacherSerializer(read_only=True)
     slot = serializers.CharField()
     class Meta:
         model = Section
-        fields = ['slot','subject','teacher']
+        fields = ['slot', 'subject', 'teacher']
 
 class TimetableSerializer(serializers.Serializer):
     section = SectionSerializer(read_only=True)
