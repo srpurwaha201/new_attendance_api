@@ -89,7 +89,7 @@ class StudentView(APIView):
                 i['present'] = present
         except Exception as e:
             print ("error occured in StudentView", e)
-            return Response({"status": "0", "error": "internal error occured"})
+            return Response({"status": "0", "error": "internal error occured", "exception": e})
 
         return Response({"status": "1", "Student": studentserializer.data, "Sections": sectionserializer.data})
 
