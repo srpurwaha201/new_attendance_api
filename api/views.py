@@ -54,7 +54,7 @@ class RetrieveStudentView(RetrieveAPIView):
 
     def get_object(self):
         queryset = self.get_queryset()
-        user = User.objects.get(email=self.request.data.get('email'))
+        user = User.objects.get(email=self.request.GET["email"])
         obj = get_object_or_404(queryset, user=user)
         return obj
 
@@ -66,7 +66,7 @@ class RetrieveTeacherView(RetrieveAPIView):
 
     def get_object(self):
         queryset = self.get_queryset()
-        user = User.objects.get(email=self.request.data.get('email'))
+        user = User.objects.get(email=self.request.GET["email"])
         obj = get_object_or_404(queryset, user=user)
         return obj
 
@@ -76,7 +76,7 @@ class StudentView(APIView):
         # print("roll no is -------------> ",request.data.get('rollno'))
         # rollno = request.data.get('rollno')
         try:
-            email = request.data.get('email')
+            email = request.GET["email"]
             student = Student.objects.get(user__email=email)
             # print("studet is ------------------------>",student.name)
             sections = student.section_set.all()
@@ -97,7 +97,7 @@ class TimetableView(APIView):
     permission_classes = [IsAuthenticated, StudentPermission]
     def get(self, request):
         try:
-            email = request.data.get('email')
+            email = request.GET["email"]
             student = Student.objects.get(user__email=email)
             sections = student.section_set.all()
             response = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": []}
@@ -123,9 +123,9 @@ class SectionStudentView(APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
     def get(self, request):
         try:
-            email = request.data.get('email')
+            email = request.GET["email"]
             teacher = Teacher.objects.get(user__email=email)
-            section = teacher.section_set.all().filter(slot=request.data.get('slot'))[0]
+            section = teacher.section_set.all().filter(slot=request.GET["slot"])[0]
             sectionserializer = SectionSerializer(section)
             students = section.students.all()
             studentsserializer = StudentSerializer(students, many=True)
@@ -140,7 +140,7 @@ class TeacherTimetableView(APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
     def get(self, request):
         try:
-            email = request.data.get('email')
+            email = request.GET["email"]
             teacher = Teacher.objects.get(user__email=email)
             sections = teacher.section_set.all()
             response = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": []}
