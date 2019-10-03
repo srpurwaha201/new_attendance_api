@@ -111,7 +111,8 @@ class TimetableView(APIView):
 
             for _, value in response.items():
                 value.sort(key=lambda item:item['startTime'])
-                response["status"] = "1"
+            
+            response["status"] = "1"
         except Exception as e:
             print("error inTimeTableView", e)
             return Response({"status": "0", "error": "internal error occured"})
