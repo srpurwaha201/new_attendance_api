@@ -22,7 +22,7 @@ class AttendanceView(APIView):
             students = []
             for r in rollnos:
                 students.append(Student.objects.get(rollno=r))
-            attendance = Attendance.objects.get_or_create(timetable=timetable, date=date)
+            attendance, _ = Attendance.objects.get_or_create(timetable=timetable, date=date)
             for s in students:
                 attendance.students.add(s)
             attendance.save()
