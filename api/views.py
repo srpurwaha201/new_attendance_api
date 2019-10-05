@@ -227,6 +227,16 @@ class TodaysClassesView(APIView):
                     del t['section']['teacher'] 
                     classes.append(t)
             
+            labs = teacher.lab_set.all()
+            for lab in labs:
+                timetables = lab.timetable_set.all().filter(day=todaysday)
+                timetableserializer = TimetableSerializer(timetables, many=True)
+                # del sec['teacher']
+                for t in timetableserializer.data:
+                    del t['lab']['teacher'] 
+                    classes.append(t)
+            
+            classes.sort(key=lambda item:item['startTime'])
             response = {}
             response['classes']=classes
             response['date'] = str(date.today())
