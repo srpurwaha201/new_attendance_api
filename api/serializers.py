@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Subject, Teacher, Section, Attendance, Timetable
+from .models import Student, Subject, Teacher, Section, Attendance, Timetable, Lab
 from accounts.models import User
 from rest_framework.authtoken.models import Token
 from accounts.serializers import UserSerializer
@@ -84,15 +84,24 @@ class SectionSerializer(serializers.Serializer):
         model = Section
         fields = ['slot', 'subject', 'teacher']
 
+class LabSerializer(serializers.Serializer):
+    slot = serializers.CharField()
+    subject = SubejctSerializer(read_only=True)
+    teacher = TeacherSerializer(read_only=True)
+    class Meta:
+        model = Lab
+        fields = ['slot','subject','teacher']
+
 class TimetableSerializer(serializers.Serializer):
     section = SectionSerializer(read_only=True)
+    lab = LabSerializer(read_only=True)
     day = serializers.CharField()
     startTime = serializers.TimeField()
     endTime = serializers.TimeField()
     location =  serializers.CharField(max_length = 50)
     class Meta:
         model = Timetable
-        fields = ['section', 'day','startTime','endTime', 'location']
+        fields = ['section','lab', 'day','startTime','endTime', 'location']
 
 
 class AttendanceSerializer(serializers.Serializer):

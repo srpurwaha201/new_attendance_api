@@ -109,6 +109,18 @@ class TimetableView(APIView):
                 timetableserializer = TimetableSerializer(timetables, many=True)
                 for j in timetableserializer.data:
                     # print(j)
+                    j['type']='section'
+                    response[j['day']].append(j)
+            
+            labs = student.lab_set.all()
+            for i in labs:
+                # print(i)
+                timetables = i.timetable_set.all()
+                timetableserializer = TimetableSerializer(timetables, many=True)
+                for j in timetableserializer.data:
+                    # print(j)
+                    # del j['lab']['section']
+                    j['type']='lab'
                     response[j['day']].append(j)
 
             for _, value in response.items():

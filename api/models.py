@@ -35,12 +35,13 @@ class Section(models.Model):
         return self.slot
 
 class Lab(models.Model):
-    section = models.ForeignKey(Section, null=False, on_delete=models.CASCADE)
+    slot = models.CharField(primary_key=True, max_length=10)
+    subject = models.ForeignKey(Subject, null=False, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student,blank=False)
 
     def __str__(self):
-        return self.section.slot
+        return self.slot
 
 
 class Timetable(models.Model):
