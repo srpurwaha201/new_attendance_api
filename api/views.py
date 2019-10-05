@@ -239,7 +239,8 @@ class TodaysClassesView(APIView):
             classes.sort(key=lambda item:item['startTime'])
             response = {}
             response['classes']=classes
-            response['date'] = str(date.today())
+            # response['date'] = str(date.today())
+            response['date']="2019-10-07"
             response['status']='1'
         except Exception as e:
             print ("error occured in TodaysClassesView", e)
