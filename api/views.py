@@ -183,6 +183,7 @@ class TeacherTimetableView(APIView):
                 timetables = i.timetable_set.all()
                 timetableserializer = TimetableSerializer(timetables, many=True)
                 for j in timetableserializer.data:
+                    j['type']='section'
                     del j['section']['teacher']
                     response[j['day']].append(j)
 
