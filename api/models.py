@@ -67,9 +67,9 @@ class Timetable(models.Model):
     startTime = models.TimeField()
     endTime = models.TimeField()
     location = models.CharField(max_length = 50)
-    L = "Lab"
-    S = "Section"
-    CATEGORY_CHOICES = [(L, "Lab"),(S,"Section")]
+    L = "lab"
+    S = "section"
+    CATEGORY_CHOICES = [(L, "lab"),(S,"section")]
     category = models.CharField(max_length=20, choices = CATEGORY_CHOICES, default=S)
 
     def __str__(self):
