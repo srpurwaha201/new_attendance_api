@@ -183,7 +183,7 @@ class TeacherTimetableView(APIView):
                 timetables = i.timetable_set.all()
                 timetableserializer = TimetableSerializer(timetables, many=True)
                 for j in timetableserializer.data:
-                    j['type']='section'
+                    # j['type']='section'
                     del j['section']['teacher']
                     response[j['day']].append(j)
 
@@ -195,7 +195,7 @@ class TeacherTimetableView(APIView):
                 for j in timetableserializer.data:
                     # print(j)
                     # del j['lab']['section']
-                    j['type']='lab'
+                    # j['type']='lab'
                     del j['lab']['teacher']
                     response[j['day']].append(j)
 
