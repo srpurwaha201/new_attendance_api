@@ -99,9 +99,10 @@ class TimetableSerializer(serializers.Serializer):
     startTime = serializers.TimeField()
     endTime = serializers.TimeField()
     location =  serializers.CharField(max_length = 50)
+    category = serializers.CharField(max_length=20)
     class Meta:
         model = Timetable
-        fields = ['section','lab', 'day','startTime','endTime', 'location']
+        fields = ['section','lab', 'day','startTime','endTime', 'location','category']
 
 
 class AttendanceSerializer(serializers.Serializer):
