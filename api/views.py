@@ -186,6 +186,17 @@ class TeacherTimetableView(APIView):
                     del j['section']['teacher']
                     response[j['day']].append(j)
 
+            labs = teacher.lab_set.all()
+            for i in labs:
+                # print(i)
+                timetables = i.timetable_set.all()
+                timetableserializer = TimetableSerializer(timetables, many=True)
+                for j in timetableserializer.data:
+                    # print(j)
+                    # del j['lab']['section']
+                    j['type']='lab'
+                    response[j['day']].append(j)
+
             for _, value in response.items():
                 value.sort(key=lambda item:item['startTime'])
             response["status"] = "1"
