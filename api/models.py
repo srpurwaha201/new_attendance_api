@@ -76,6 +76,10 @@ class Attendance(models.Model):
     #students contain only present students. Total no. of class will be calculated using current date and timetable.
     #total % will be calculated accordingly
     students = models.ManyToManyField(Student)
+    lab = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.timetable.section)+"-"+str(self.date)
+        if self.lab==True:
+            return str(self.timetable.lab)+"-"+str(self.date)
+        else:
+            return str(self.timetable.section)+"-"+str(self.date)

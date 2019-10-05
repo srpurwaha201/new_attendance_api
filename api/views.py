@@ -8,23 +8,38 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from .permissions import AttendancePermission, StudentPermission, TeacherPermission, ProfilePermission
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
-from datetime import datetime
+import datetime
 from datetime import date
 
 class AttendanceView(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
     def post(self, request):
         try:
-            timetableid = request.data.get('timetableid')
-            timetable = Timetable.objects.get(id=timetableid)
+            # timetableid = request.data.get('timetableid')
+            # timetable = Timetable.objects.get(id=timetableid)
             date = request.data.get('date')
+            year, month, day = (int(i) for i in date.split('-'))
+            weekday = datetime.date(year, month, day).strftime("%A") 
             rollnos = request.data.get('rollnos')
-            print (self.check_object_permissions(request, timetable))
-            print(rollnos)
+            lab = request.data.get('lab')
+            slot = request.data.get('slot')
+
             students = []
             for r in rollnos:
                 students.append(Student.objects.get(rollno=r))
-            attendance, _ = Attendance.objects.get_or_create(timetable=timetable, date=date)
+
+            if lab=='True':
+                subslot = request.data.get('subslot')
+                labslot = slot+'-'+subslot
+                timetable = Timetable.objects.filter(lab__slot = labslot).filter(day=weekday)[0]
+                attendance, _ = Attendance.objects.get_or_create(timetable=timetable, date=date, lab=True)
+            else:
+                timetable = Timetable.objects.filter(section__slot = slot).filter(day=weekday)[0]
+                attendance, _ = Attendance.objects.get_or_create(timetable=timetable, date=date, lab = False)
+            # print (self.check_object_permissions(request, timetable))
+            # print(rollnos)
+            
+            # print(attendance)
             for s in students:
                 attendance.students.add(s)
             attendance.save()
