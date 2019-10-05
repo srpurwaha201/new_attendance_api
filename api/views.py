@@ -196,6 +196,7 @@ class TeacherTimetableView(APIView):
                     # print(j)
                     # del j['lab']['section']
                     j['type']='lab'
+                    del j['lab']['teacher']
                     response[j['day']].append(j)
 
             for _, value in response.items():
