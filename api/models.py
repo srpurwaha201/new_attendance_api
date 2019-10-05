@@ -35,13 +35,17 @@ class Section(models.Model):
         return self.slot
 
 class Lab(models.Model):
-    slot = models.CharField(primary_key=True, max_length=10)
+    slot = models.CharField(max_length=10)
+    subslot = models.CharField(max_length=100)
     subject = models.ForeignKey(Subject, null=False, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student,blank=False)
+    
+    class Meta:
+        unique_together = ('slot', 'subslot')
 
     def __str__(self):
-        return self.slot
+        return self.slot+'-'+self.subslot
 
 
 class Timetable(models.Model):

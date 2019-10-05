@@ -30,8 +30,7 @@ class AttendanceView(APIView):
 
             if lab=='True':
                 subslot = request.data.get('subslot')
-                labslot = slot+'-'+subslot
-                timetable = Timetable.objects.filter(lab__slot = labslot).filter(day=weekday)[0]
+                timetable = Timetable.objects.filter(lab__slot = slot).filter(lab__subslot=subslot).filter(day=weekday)[0]
                 attendance, _ = Attendance.objects.get_or_create(timetable=timetable, date=date, lab=True)
             else:
                 timetable = Timetable.objects.filter(section__slot = slot).filter(day=weekday)[0]
@@ -100,10 +99,16 @@ class StudentView(APIView):
             studentserializer = StudentSerializer(student)
             sectionserializer = SectionSerializer(sections, many=True)
             for i in sectionserializer.data:
-                total = len(Attendance.objects.filter(timetable__section__slot=i['slot']))
-                present = len(student.attendance_set.all().filter(timetable__section__slot=i['slot']))
+                del i['teacher']
+                total = len(Attendance.objects.filter(lab=False).filter(timetable__section__slot=i['slot']))
+                present = len(student.attendance_set.all().filter(lab=False).filter(timetable__section__slot=i['slot']))
                 i['total'] = total
                 i['present'] = present
+                lab = student.lab_set.all().filter(slot=i['slot'])
+                if len(lab)!=0:
+                    lab = lab[0]
+                    i['total']+=len(Attendance.objects.filter(timetable__lab__slot=lab.slot).filter(timetable__lab__subslot=lab.subslot))
+                    i['present']+=len(student.attendance_set.all().filter(timetable__lab__slot=lab.slot).filter(timetable__lab__subslot=lab.subslot))
         except Exception as e:
             print ("error occured in StudentView", e)
             return Response({"status": "0", "error": "internal error occured", "exception": e})

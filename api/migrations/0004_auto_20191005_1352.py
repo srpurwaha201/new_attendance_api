@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lab',
             name='slot',
-            field=models.CharField(default='1', max_length=10, primary_key=True, serialize=False),
+            field=models.CharField(default='1', max_length=10, serialize=False),
             preserve_default=False,
         ),
         migrations.AddField(
