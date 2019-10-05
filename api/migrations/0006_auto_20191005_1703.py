@@ -15,13 +15,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lab',
             name='id',
-            field=models.AutoField(auto_created=True, default=1, primary_key=True, serialize=False, verbose_name='ID'),
+            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='lab',
             name='subslot',
-            field=models.CharField(default=1, max_length=100),
+            field=models.CharField( max_length=100),
             preserve_default=False,
         ),
         migrations.AlterField(
