@@ -8,6 +8,8 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from .permissions import AttendancePermission, StudentPermission, TeacherPermission, ProfilePermission
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
+from datetime import datetime
+from datetime import date
 
 class AttendanceView(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
@@ -160,3 +162,35 @@ class TeacherTimetableView(APIView):
             return Response({"status": "0", "error": "internal error occured"})
 
         return Response(response)
+
+class TodaysClassesView(APIView):
+    permission_classes = [IsAuthenticated, TeacherPermission]
+    def get(self, request):
+        try:
+            email = request.GET['email']
+            days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+            # todaysday = days[datetime.now().day]
+            todaysday='Monday'
+            classes = []
+            teacher = Teacher.objects.get(user__email=email)
+            sections = teacher.section_set.all()
+            for sec in sections:
+                timetables = sec.timetable_set.all().filter(day=todaysday)
+                timetableserializer = TimetableSerializer(timetables, many=True)
+                # del sec['teacher']
+                for t in timetableserializer.data:
+                    del t['section']['teacher'] 
+                    classes.append(t)
+            
+            response = {}
+            response['classes']=classes
+            response['date'] = str(date.today())
+            response['status']='1'
+        except Exception as e:
+            print ("error occured in TodaysClassesView", e)
+            return Response({"status": "0", "error": "internal error occured"})
+        return Response(response)
+
+
+
+
