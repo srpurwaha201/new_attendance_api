@@ -34,6 +34,14 @@ class Section(models.Model):
     def __str__(self):
         return self.slot
 
+class Lab(models.Model):
+    section = models.ForeignKey(Section, null=False, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    students = models.ManyToManyField(Student,blank=False)
+
+    def __str__(self):
+        return self.section.slot
+
 
 class Timetable(models.Model):
     Mon = "Monday"
@@ -48,14 +56,18 @@ class Timetable(models.Model):
         (Thur,"Thursday"),
         (Fri,"Friday")
     ]
-    section = models.ForeignKey(Section, null=False,on_delete=models.CASCADE)
+    section = models.ForeignKey(Section, null=True,blank = True,on_delete=models.CASCADE)
+    lab = models.ForeignKey(Lab,null=True, blank=True, on_delete=models.CASCADE)
     day = models.CharField(max_length=20, choices = DAY_CHOICES, default=Mon)
     startTime = models.TimeField()
     endTime = models.TimeField()
     location = models.CharField(max_length = 50)
 
     def __str__(self):
-        return str(self.section)+"-"+self.day
+        if self.section is None:
+            return "Lab"+"-"+str(self.lab)+"-"+self.day
+        else :
+            return str(self.section)+"-"+self.day
 
 class Attendance(models.Model):
     timetable = models.ForeignKey(Timetable,on_delete=models.CASCADE)
