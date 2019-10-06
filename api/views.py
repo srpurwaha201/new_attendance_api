@@ -260,10 +260,24 @@ class UploadStudentImageView(APIView):
             student.image.name = "-".join(student.rollno.split("/"))+"."+student.image.name.split(".")[1]
             student.save()
         except Exception as e:
-            print ("error occured in UploadStudentImageView", e)
             return Response({"status": "0", "error": "internal error occured"})
         
         return Response({"status":"1"})
+
+class StudentImageView(APIView):
+    permission_classes = [IsAuthenticated, StudentPermission]
+    def get(self, request):
+        try:
+            email = request.GET['email']
+            student = Student.objects.get(user__email=email)
+            if student.image: 
+                image = student.image.path
+            else :
+                image = "None"
+        except Exception as e:
+            return Response({"status": "0", "error": "internal error occured"})
+                    
+        return Response({"status":"1","image":image})
 
 
 
