@@ -52,3 +52,11 @@ class ProfilePermission(permissions.BasePermission):
         else:
             user_request = User.objects.get(auth_token=token)
             return user_request.is_staff
+
+class ImageUploadPermission(permissions.BasePermission):
+    message = "you are not authorized to change the image"
+
+    def has_permission(self, request, view):
+        token = request.auth
+        user_request = User.objects.get(auth_token=token)
+        return user_request.is_staff

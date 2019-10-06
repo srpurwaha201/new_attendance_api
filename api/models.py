@@ -17,7 +17,8 @@ class Student(models.Model):
     # image_tag.allow_tags = True
 
     def image_tag(self):
-        return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.image))
+        if self.image:
+            return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.image))
 
     image_tag.short_description = 'Image'
 

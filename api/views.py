@@ -5,7 +5,7 @@ from .models import *
 from .serializers import *
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-from .permissions import AttendancePermission, StudentPermission, TeacherPermission, ProfilePermission
+from .permissions import AttendancePermission, StudentPermission, TeacherPermission, ProfilePermission, ImageUploadPermission
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 import datetime
@@ -248,16 +248,22 @@ class TodaysClassesView(APIView):
         return Response(response)
 
 class UploadStudentImageView(APIView):
+    permission_classes = [IsAuthenticated, ProfilePermission]
     def post(self, request):
-        email = request.data.get('email')
-        student = Student.objects.get(user__email=email)
-        image = request.data.get('image')
-        if student.image.name:
-            student.image.delete()
-        student.image = image
-        student.image.name = "-".join(student.rollno.split("/"))+"."+student.image.name.split(".")[1]
-        student.save()
-        return Response({"status": "1"})
+        try:
+            email = request.data.get('email')
+            student = Student.objects.get(user__email=email)
+            image = request.data.get('image')
+            if student.image.name:
+                student.image.delete()
+            student.image = image
+            student.image.name = "-".join(student.rollno.split("/"))+"."+student.image.name.split(".")[1]
+            student.save()
+        except Exception as e:
+            print ("error occured in UploadStudentImageView", e)
+            return Response({"status": "0", "error": "internal error occured"})
+        
+        return Response({"status":"1"})
 
 
 
