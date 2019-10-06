@@ -1,12 +1,25 @@
 from django.db import models
 from accounts.models import User
+from django.utils.safestring import mark_safe
 
 class Student(models.Model):
     user = models.OneToOneField(User, blank=False, related_name = '+', on_delete=models.CASCADE)
     rollno = models.CharField(max_length=50, primary_key=True)
+    image = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return self.user.email
+
+    # def image_tag(self):
+    #     from django.utils.html import escape
+    #     return u'<img src="%s" />' % escape(self.image.url)
+    # image_tag.short_description = 'Image'
+    # image_tag.allow_tags = True
+
+    def image_tag(self):
+        return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.image))
+
+    image_tag.short_description = 'Image'
 
 
 class Teacher(models.Model):

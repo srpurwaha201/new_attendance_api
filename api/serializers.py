@@ -9,7 +9,7 @@ class StudentSerializer(serializers.Serializer):
     rollno = serializers.CharField()
     class Meta:
         model = Student
-        fields = ['rollno','user']
+        fields = ['rollno','user','image']
 
 
     def create(self, validated_data):
