@@ -39,11 +39,13 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'accounts',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'corsheaders'
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'attendance.urls'
 AUTH_USER_MODEL = 'accounts.User'
