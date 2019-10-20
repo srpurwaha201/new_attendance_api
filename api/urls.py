@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from .views import AttendanceView, StudentView, TimetableView, SectionStudentView, TeacherTimetableView, CreateStudentView, CreateTeacherView, RetrieveStudentView, RetrieveTeacherView, TodaysClassesView, UploadStudentImageView, StudentImageView
+from .views import AttendanceView, StudentView, TimetableView, SectionStudentView, TeacherTimetableView, CreateStudentView, CreateTeacherView, RetrieveStudentView, RetrieveTeacherView, TodaysClassesView, UploadStudentImageView, StudentImageView, ImageAttendanceView
 
 app_name = "attendances"
 
@@ -15,5 +15,6 @@ urlpatterns = [
     url('teacher/timetable/$', TeacherTimetableView.as_view()),
     url('teacher/todaysclasses/$',TodaysClassesView.as_view()),
     url('student/image/upload/$',UploadStudentImageView.as_view()),
-    url('student/image/$',StudentImageView.as_view())
+    url('student/image/$',StudentImageView.as_view()),
+    url('attendance/find_faces/$', ImageAttendanceView.as_view())
 ]
