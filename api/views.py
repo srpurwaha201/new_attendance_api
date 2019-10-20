@@ -286,7 +286,7 @@ class StudentImageView(APIView):
 
 
 class ImageAttendanceView(APIView):
-    # permission_classes = [IsAuthenticated, TeacherPermission]
+    permission_classes = [IsAuthenticated, TeacherPermission]
     def post(self, request):
         try:
             slot = request.data.get('slot')
