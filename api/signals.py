@@ -10,9 +10,11 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=Student, dispatch_uid='example_method')
 def save_embedding(sender, student, **kwargs):
-    print ("####inside############")
-    embedding = get_embedding(student.image.path)
-    np_bytes = pickle.dumps(embedding)
-    np_base64 = base64.b64encode(np_bytes)
-    student.embedding = np_base64
+    if student.image not None and student.embedding==None
+        embedding = get_embedding(student.image.path)
+        np_bytes = pickle.dumps(embedding)
+        np_base64 = base64.b64encode(np_bytes)
+        if student.embedding!= np_base64
+            student.embedding = np_base64
+            student.save
 

@@ -32,11 +32,11 @@ class Student(models.Model):
     image_tag.short_description = 'Image'
 
 @receiver(post_save, sender=Student, dispatch_uid="update_stock_count")
-def save_embedding(sender, instance, **kwargs):
-    embedding = get_embedding(instance.image.path)
-    np_bytes = pickle.dumps(embedding)
-    np_base64 = base64.b64encode(np_bytes)
-    if instance.embedding != np_base64:
+def save_embedding(sender, instance, created, **kwargs):
+    if created:
+        embedding = get_embedding(instance.image.path)
+        np_bytes = pickle.dumps(embedding)
+        np_base64 = base64.b64encode(np_bytes)
         instance.embedding = np_base64
         instance.save()
 

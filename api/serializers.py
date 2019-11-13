@@ -19,13 +19,14 @@ class StudentSerializer(serializers.Serializer):
         email = user_data['email']
         password = user_data.pop('password')
         rollno = validated_data['rollno']
+        image = validated_data['image']
 
         try:
             if Student.objects.all().filter(rollno=rollno).exists() or User.objects.all().filter(email=email).exists():
                 raise Exception("Student already exists")
             user = User.objects.create(**user_data)
             user.set_password(password)
-            student = Student.objects.create(user=user, rollno=rollno)
+            student = Student.objects.create(user=user, rollno=rollno, image = image)
             user.student = student
             user.save()
             student.save()

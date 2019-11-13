@@ -12,12 +12,11 @@ from api.models import Student,Teacher
 @api_view(['POST'])
 def login(request):
     if request.method == 'POST':
-        username, password = request.data.get('email'),request.data.get('password')
+        username, password = request.data.get('email'), request.data.get('password')
         user = authenticate(username=username, password=password)
         response = {"data": None,
                     "token": None,
                     "type": None}
-        print(user.teacher,user.student)
         if user:
             if user.teacher:
                 teacher = Teacher.objects.get(user=user)
@@ -36,7 +35,6 @@ def login(request):
 
             token = Token.objects.get(user=user).key
             response["token"] = token
-
             return Response(response)
         else:
             return Response({"message": "Invalid login credentials"})
