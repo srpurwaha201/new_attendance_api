@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from .views import AttendanceView, StudentView, TimetableView, SectionStudentView, TeacherTimetableView, CreateStudentView, CreateTeacherView, RetrieveStudentView, RetrieveTeacherView, TodaysClassesView, UploadStudentImageView, StudentImageView, ImageAttendanceView, ImageAttendanceView2
+from .views import AttendanceView, StudentView, TimetableView, SectionStudentView, TeacherTimetableView, CreateStudentView, CreateTeacherView, RetrieveStudentView, RetrieveTeacherView, TodaysClassesView, UploadStudentImageView, StudentImageView, ImageAttendanceView2
 app_name = "attendances"
 
 from api import downloader
@@ -19,6 +19,6 @@ urlpatterns = [
     url('teacher/todaysclasses/$',TodaysClassesView.as_view()),
     url('student/image/upload/$',UploadStudentImageView.as_view()),
     url('student/image/$',StudentImageView.as_view()),
-    url('attendance/find_faces/$', ImageAttendanceView.as_view()),
+    # url('attendance/find_faces/$', ImageAttendanceView.as_view()),
 url('attendance/find_faces_2/$', ImageAttendanceView2.as_view())
 ]
