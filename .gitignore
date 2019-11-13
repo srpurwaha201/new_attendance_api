@@ -8,3 +8,5 @@ local_settings.py
 db.sqlite3
 /media/
 menv
+45.pt
+haarcascade_frontalface_alt2.xml

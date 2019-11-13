@@ -19,6 +19,7 @@ import cv2
 from PIL import Image
 from .facerecog import get_faces, get_scores, get_embedding
 import base64
+from .downloader import check_resources
 
 class AttendanceView(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
@@ -341,6 +342,7 @@ class ImageAttendanceView2(APIView):
 
     def post(self, request):
         try:
+            check_resources()
             slot = request.data.get('slot')
             image = request.data.get('image')
             filename = str(image)

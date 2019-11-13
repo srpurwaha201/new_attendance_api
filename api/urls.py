@@ -2,6 +2,10 @@ from django.conf.urls import include, url
 from .views import AttendanceView, StudentView, TimetableView, SectionStudentView, TeacherTimetableView, CreateStudentView, CreateTeacherView, RetrieveStudentView, RetrieveTeacherView, TodaysClassesView, UploadStudentImageView, StudentImageView, ImageAttendanceView, ImageAttendanceView2
 app_name = "attendances"
 
+from api import downloader
+
+downloader.check_resources()
+
 urlpatterns = [
     url('attendances/$', AttendanceView.as_view()),
     url('student/$', StudentView.as_view()),

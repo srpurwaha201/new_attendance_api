@@ -36,7 +36,9 @@ def save_embedding(sender, instance, **kwargs):
     embedding = get_embedding(instance.image.path)
     np_bytes = pickle.dumps(embedding)
     np_base64 = base64.b64encode(np_bytes)
-    instance.embedding = np_base64
+    if instance.embedding != np_base64:
+        instance.embedding = np_base64
+        instance.save()
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, blank=False, related_name = '+', on_delete=models.CASCADE)
