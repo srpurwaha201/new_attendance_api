@@ -15,6 +15,10 @@ import face_recognition
 from django.conf import settings
 import numpy as np
 import os
+import cv2
+from PIL import Image
+from .facerecog import get_faces, get_scores, get_embedding
+import base64
 
 class AttendanceView(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
@@ -330,6 +334,45 @@ class ImageAttendanceView(APIView):
             return Response({"status": "0", "error": "internal error occured"})
 
         return Response({"rollnos":recognized_people, "status":"1"})
+
+
+class ImageAttendanceView2(APIView):
+    permission_classes = [IsAuthenticated, AttendancePermission]
+
+    def post(self, request):
+        try:
+            slot = request.data.get('slot')
+            image = request.data.get('image')
+            filename = str(image)
+
+            with default_storage.open(filename, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+
+            section = Section.objects.get(slot=slot)
+            students = section.students.all()
+
+            label_faces_embeddings = []
+            get_rollno = {}
+            for i,st in enumerate(students):
+
+                np_bytes = base64.b64decode(st.embedding)
+                np_array = pickle.loads(np_bytes)
+                label_faces_embeddings.append(np_array)
+                get_rollno[i] = st.rollno
+
+            detected_faces = get_faces(settings.MEDIA_ROOT + '/' + filename)
+            scored_indexes = get_scores(label_faces_embeddings, detected_faces)
+
+            recognized_people = []
+            for index in scored_indexes:
+                recognized_people.append(get_rollno[index])
+            os.remove(settings.MEDIA_ROOT + '/' + filename)
+
+        except Exception as e:
+            return Response({"status": "0", "error": "internal error occured"})
+
+        return Response({"rollnos": recognized_people, "status": "1"})
 
    
 

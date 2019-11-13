@@ -3,6 +3,8 @@ from .models import Student, Subject, Teacher, Section, Attendance, Timetable, L
 from accounts.models import User
 from rest_framework.authtoken.models import Token
 from accounts.serializers import UserSerializer
+import pickle
+import base64
 
 class StudentSerializer(serializers.Serializer):
     user = UserSerializer()
@@ -29,6 +31,7 @@ class StudentSerializer(serializers.Serializer):
             student.save()
             token = Token.objects.create(user=user)
             token.save()
+
         except Exception as e:
             error = {'message': ",".join(e.args) if len(e.args) > 0 else 'Unknown Internal Error'}
             raise serializers.ValidationError(error)

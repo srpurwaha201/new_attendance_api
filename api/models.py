@@ -1,11 +1,20 @@
 from django.db import models
 from accounts.models import User
 from django.utils.safestring import mark_safe
+from .facerecog import get_embedding
+import pickle
+import base64
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, blank=False, related_name = '+', on_delete=models.CASCADE)
     rollno = models.CharField(max_length=50, primary_key=True)
     image = models.ImageField(blank=True, null=True)
+    embedding = models.BinaryField(blank = True, null = True)
 
     def __str__(self):
         return self.user.email
@@ -22,6 +31,12 @@ class Student(models.Model):
 
     image_tag.short_description = 'Image'
 
+@receiver(post_save, sender=Student, dispatch_uid="update_stock_count")
+def save_embedding(sender, instance, **kwargs):
+    embedding = get_embedding(instance.image.path)
+    np_bytes = pickle.dumps(embedding)
+    np_base64 = base64.b64encode(np_bytes)
+    instance.embedding = np_base64
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, blank=False, related_name = '+', on_delete=models.CASCADE)
