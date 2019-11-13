@@ -20,6 +20,7 @@ from PIL import Image
 from .facerecog import get_faces, get_scores, get_embedding
 import base64
 
+
 class AttendanceView(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
     def post(self, request):
@@ -336,6 +337,13 @@ class ImageAttendanceView(APIView):
         return Response({"rollnos":recognized_people, "status":"1"})
 
 
+def resize_image(filepath, width):
+    img = Image.open(filepath)
+    wpercent = (width/float(img.size[0]))
+    hsize = int((float(img.size[1])*float(wpercent)))
+    img = img.resize((width,hsize), PIL.Image.ANTIALIAS)
+    img.save(filepath)
+
 class ImageAttendanceView2(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
 
@@ -348,6 +356,11 @@ class ImageAttendanceView2(APIView):
             with default_storage.open(filename, 'wb+') as destination:
                 for chunk in image.chunks():
                     destination.write(chunk)
+
+            # resizing image to width 600 mainting aspect ratio
+
+            resize_image(settings.MEDIA_ROOT + '/' + filename, 600)
+
 
             section = Section.objects.get(slot=slot)
             students = section.students.all()
