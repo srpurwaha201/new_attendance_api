@@ -341,7 +341,7 @@ def resize_image(filepath, width):
     img = Image.open(filepath)
     wpercent = (width/float(img.size[0]))
     hsize = int((float(img.size[1])*float(wpercent)))
-    img = img.resize((width,hsize), PIL.Image.ANTIALIAS)
+    img = img.resize((width,hsize), Image.ANTIALIAS)
     img.save(filepath)
 
 class ImageAttendanceView2(APIView):
