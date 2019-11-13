@@ -5,7 +5,7 @@ import sys
 
 
 def main():
-    os.system('pip3 install torch==1.3.1+cpu torchvision==0.4.2+cpu -f')
+    # os.system('pip3 install torch==1.3.1+cpu torchvision==0.4.2+cpu -f')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'attendance.settings')
     try:
         from django.core.management import execute_from_command_line

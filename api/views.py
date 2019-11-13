@@ -11,7 +11,7 @@ from rest_framework.exceptions import PermissionDenied
 import datetime
 from datetime import date
 from django.core.files.storage import default_storage
-# import face_recognition
+import face_recognition
 from django.conf import settings
 import numpy as np
 import os
@@ -290,51 +290,51 @@ class StudentImageView(APIView):
         return Response({"status":"1","image":image})
 
 
-# class ImageAttendanceView(APIView):
-#     permission_classes = [IsAuthenticated, AttendancePermission]
-#     def post(self, request):
-#         try:
-#             slot = request.data.get('slot')
-#             image = request.data.get('image')
-#             filename = str(image)
+class ImageAttendanceView(APIView):
+    permission_classes = [IsAuthenticated, AttendancePermission]
+    def post(self, request):
+        try:
+            slot = request.data.get('slot')
+            image = request.data.get('image')
+            filename = str(image)
 
-#             with default_storage.open(filename, 'wb+') as destination:
-#                 for chunk in image.chunks():
-#                     destination.write(chunk)
+            with default_storage.open(filename, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
 
-#             section = Section.objects.get(slot = slot)
-#             students = section.students.all()
+            section = Section.objects.get(slot = slot)
+            students = section.students.all()
             
-#             known_face_encodings = []
-#             known_face_names = []
+            known_face_encodings = []
+            known_face_names = []
 
-#             for st in students:
-#                 face_image = face_recognition.load_image_file(st.image.path)
-#                 encoding = face_recognition.face_encodings(face_image)[0]
-#                 known_face_encodings.append(encoding)
-#                 known_face_names.append(st.rollno)
+            for st in students:
+                face_image = face_recognition.load_image_file(st.image.path)
+                encoding = face_recognition.face_encodings(face_image)[0]
+                known_face_encodings.append(encoding)
+                known_face_names.append(st.rollno)
             
-#             image = face_recognition.load_image_file(settings.MEDIA_ROOT+'/'+filename)
-#             face_locations = face_recognition.face_locations(image)
-#             face_encodings = face_recognition.face_encodings(image, face_locations)
+            image = face_recognition.load_image_file(settings.MEDIA_ROOT+'/'+filename)
+            face_locations = face_recognition.face_locations(image)
+            face_encodings = face_recognition.face_encodings(image, face_locations)
 
-#             recognized_people = []
-#             for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
-#                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding,tolerance=0.6)
-#                 name = "Unknown"
+            recognized_people = []
+            for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+                matches = face_recognition.compare_faces(known_face_encodings, face_encoding,tolerance=0.6)
+                name = "Unknown"
 
-#                 face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-#                 best_match_index = np.argmin(face_distances)
-#                 if matches[best_match_index]:
-#                     name = known_face_names[best_match_index]
-#                     if name != "Unknown":
-#                         recognized_people.append(name)
+                face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                best_match_index = np.argmin(face_distances)
+                if matches[best_match_index]:
+                    name = known_face_names[best_match_index]
+                    if name != "Unknown":
+                        recognized_people.append(name)
 
-#             os.remove(settings.MEDIA_ROOT+'/'+filename)
-#         except Exception as e:
-#             return Response({"status": "0", "error": "internal error occured"})
+            os.remove(settings.MEDIA_ROOT+'/'+filename)
+        except Exception as e:
+            return Response({"status": "0", "error": "internal error occured"})
 
-#         return Response({"rollnos":recognized_people, "status":"1"})
+        return Response({"rollnos":recognized_people, "status":"1"})
 
 
 class ImageAttendanceView2(APIView):
