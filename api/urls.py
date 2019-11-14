@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from .views import AttendanceView, StudentView, TimetableView, SectionStudentView, TeacherTimetableView, CreateStudentView, CreateTeacherView, RetrieveStudentView, RetrieveTeacherView, TodaysClassesView, UploadStudentImageView, StudentImageView, ImageAttendanceView, ImageAttendanceView2
+from .downloader import check_resources
 app_name = "attendances"
+
+check_resources()
 
 urlpatterns = [
     url('attendances/$', AttendanceView.as_view()),
