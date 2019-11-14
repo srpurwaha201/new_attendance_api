@@ -9,7 +9,7 @@ from .permissions import AttendancePermission, StudentPermission, TeacherPermiss
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 import datetime
-from datetime import date
+# from datetime import date
 from django.core.files.storage import default_storage
 import face_recognition
 from django.conf import settings
@@ -224,8 +224,8 @@ class TodaysClassesView(APIView):
         try:
             email = request.GET['email']
             days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-            todaysday = days[datetime.now().day]
-            # todaysday='Monday'
+            # todaysday = days[datetime.datetime.now().weekday()]
+            todaysday='Monday'
             classes = []
             teacher = Teacher.objects.get(user__email=email)
             sections = teacher.section_set.all()
@@ -249,7 +249,7 @@ class TodaysClassesView(APIView):
             classes.sort(key=lambda item:item['startTime'])
             response = {}
             response['classes']=classes
-            # response['date'] = str(date.today())
+            # response['date'] = str(datetime.date.today())
             response['date']="2019-10-07"
             response['status']='1'
         except Exception as e:
@@ -337,12 +337,12 @@ class ImageAttendanceView(APIView):
         return Response({"rollnos":recognized_people, "status":"1"})
 
 
-def resize_image(filepath, width):
-    img = Image.open(filepath)
-    wpercent = (width/float(img.size[0]))
-    hsize = int((float(img.size[1])*float(wpercent)))
-    img = img.resize((width,hsize), Image.ANTIALIAS)
-    img.save(filepath)
+# def resize_image(filepath, width):
+#     img = Image.open(filepath)
+#     wpercent = (width/float(img.size[0]))
+#     hsize = int((float(img.size[1])*float(wpercent)))
+#     img = img.resize((width,hsize), Image.ANTIALIAS)
+#     img.save(filepath)
 
 class ImageAttendanceView2(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
@@ -359,7 +359,7 @@ class ImageAttendanceView2(APIView):
 
             # resizing image to width 600 mainting aspect ratio
 
-            resize_image(settings.MEDIA_ROOT + '/' + filename, 600)
+            # resize_image(settings.MEDIA_ROOT + '/' + filename, 600)
 
 
             section = Section.objects.get(slot=slot)

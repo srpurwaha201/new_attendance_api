@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from PIL import Image
 
-margin = 0.5
+margin = 0.8
 imsize = 160
 embedding_dim = 512
 
@@ -121,6 +121,7 @@ def get_scores(label_faces_emb,detected_faces):
             dist.append((avgd.item(),(i,j)))
 
     dist = sorted(dist, key=lambda x: x[1])
+    print("----------------------------------------------------------->",dist)
     visitedl = [False]*nl
     visitedd = [False]*nd
     for dst, (l, d) in dist:
