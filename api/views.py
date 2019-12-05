@@ -296,7 +296,9 @@ class ImageAttendanceView(APIView):
         try:
             slot = request.data.get('slot')
             image = request.data.get('image')
+            # filename = "cool.jpeg"
             filename = str(image)
+            # print("file name----------------------------->", image)
 
             with default_storage.open(filename, 'wb+') as destination:
                 for chunk in image.chunks():
@@ -348,42 +350,52 @@ class ImageAttendanceView2(APIView):
     permission_classes = [IsAuthenticated, AttendancePermission]
 
     def post(self, request):
-        try:
-            slot = request.data.get('slot')
-            image = request.data.get('image')
-            filename = str(image)
+        # try:
+        slot = request.data.get('slot')
+        image = request.data.get('image')
+        filename = str(image)
 
-            with default_storage.open(filename, 'wb+') as destination:
-                for chunk in image.chunks():
-                    destination.write(chunk)
+        with default_storage.open(filename, 'wb+') as destination:
+            for chunk in image.chunks():
+                destination.write(chunk)
 
-            # resizing image to width 600 mainting aspect ratio
+        # resizing image to width 600 mainting aspect ratio
 
-            # resize_image(settings.MEDIA_ROOT + '/' + filename, 600)
+        # resize_image(settings.MEDIA_ROOT + '/' + filename, 600)
 
 
-            section = Section.objects.get(slot=slot)
-            students = section.students.all()
+        section = Section.objects.get(slot=slot)
+        students = section.students.all()
 
-            label_faces_embeddings = []
-            get_rollno = {}
-            for i,st in enumerate(students):
+        label_faces_embeddings = []
+        get_rollno = {}
+        for i,st in enumerate(students):
 
-                np_bytes = base64.b64decode(st.embedding)
-                np_array = pickle.loads(np_bytes)
-                label_faces_embeddings.append(np_array)
-                get_rollno[i] = st.rollno
+            np_bytes = base64.b64decode(st.embedding)
+            np_array = pickle.loads(np_bytes)
+            label_faces_embeddings.append(np_array)
+            get_rollno[i] = st.rollno
 
-            detected_faces = get_faces(settings.MEDIA_ROOT + '/' + filename)
-            scored_indexes = get_scores(label_faces_embeddings, detected_faces)
+        detected_faces, detected_faces_coord = get_faces(settings.MEDIA_ROOT + '/' + filename)
+        scored_indexes, coord = get_scores(label_faces_embeddings, detected_faces, detected_faces_coord)
 
-            recognized_people = []
-            for index in scored_indexes:
-                recognized_people.append(get_rollno[index])
-            os.remove(settings.MEDIA_ROOT + '/' + filename)
+        recognized_people = []
 
-        except Exception as e:
-            return Response({"status": "0", "error": "internal error occured"})
+        image = cv2.imread(settings.MEDIA_ROOT + '/' + filename)
+
+        for i, index in enumerate(scored_indexes):
+            recognized_people.append(get_rollno[index])
+            # print("========================================++++>",index, scored_indexes, coord)
+            x, y, w, h = coord[i]
+            image = cv2.rectangle(image, (x, y), (x + w, y + h), (36,255,12), 1)
+            cv2.putText(image, get_rollno[index], (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+
+        cv2.imwrite(settings.MEDIA_ROOT + '/' + 'output.jpeg', image) 
+        os.remove(settings.MEDIA_ROOT + '/' + filename)
+
+        # except Exception as e:
+        #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Exception occured")
+        #     return Response({"status": "0", "error": "internal error occured"})
 
         return Response({"rollnos": recognized_people, "status": "1"})
 

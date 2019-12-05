@@ -46,12 +46,14 @@ def get_faces(path):
     faces_rect = cascade.detectMultiScale(gray_image, scaleFactor=1.2, minNeighbors=5)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     detected_faces = []
+    detected_faces_coord = []
     for (x, y, w, h) in faces_rect:
         img = image[y: y+h, x: x+w][:]
         img = Image.fromarray(img)
         detected_faces.append(img)
+        detected_faces_coord.append((x,y,w,h))
 
-    return detected_faces
+    return detected_faces, detected_faces_coord
 
 class SiameseNetwork(nn.Module):
     def __init__(self, resnet):
@@ -88,7 +90,7 @@ def get_model():
     siamese_network = SiameseNetwork(resnet18)
     return siamese_network
 
-def get_scores(label_faces_emb,detected_faces):
+def get_scores(label_faces_emb,detected_faces, detected_faces_coord):
 
     label_faces_emb = torch.tensor(label_faces_emb)
     transform1 = transforms.Compose([transforms.Resize((imsize, imsize)),
@@ -124,13 +126,20 @@ def get_scores(label_faces_emb,detected_faces):
     print("----------------------------------------------------------->",dist)
     visitedl = [False]*nl
     visitedd = [False]*nd
+
+    coord_map = {}
+    
     for dst, (l, d) in dist:
         if dst<margin and not visitedl[l] and not visitedd[d]:
             visitedd[d] = True; visitedl[l] = True
+            coord_map[l] = detected_faces_coord[d]
+
 
     is_present = []
+    coord = []
     for i in range(nl):
         if visitedl[i]:
             is_present.append(i)
+            coord.append(coord_map[i])
 
-    return is_present
+    return is_present, coord
